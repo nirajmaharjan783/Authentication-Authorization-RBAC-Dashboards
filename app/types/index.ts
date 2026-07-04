@@ -1,16 +1,19 @@
-export enum Role {
-    ADMIN = "ADMIN",
-    MANAGER = "MANAGER",
-    USER = "USER",
-    GUEST = "GUEST",
-}
+// export enum Role {
+//     ADMIN = "ADMIN",
+//     MANAGER = "MANAGER",
+//     USER = "USER",
+//     GUEST = "GUEST",
+// }
+
+import { Role } from "@prisma/client";
+export { Role };
 
 export interface User {
     id: string
     name: string
     email: string
     role: Role
-    teamId?: string
+    teamId?: string | null
     team?: Team
     createdAt: Date
     updatedAt: Date

@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "@/app/provider/AuthProvider"
-import { User } from "@prisma/client"
+import { User } from "@/app/types"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 

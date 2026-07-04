@@ -2,7 +2,8 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { cookies } from "next/headers"
 import { prisma } from "./db"
-import { Role, User } from "@prisma/client"
+import { Role } from "@prisma/client"
+import type { User } from "@/app/types";
 
 const JWT_SECRET = process.env.JWT_SECRET!
 
@@ -43,8 +44,8 @@ export const getCurrentUser = async (): Promise<User | null> => {
 
         const { password, ...user } = userFromDb
 
-        return user as User
-
+        // return user as User
+        return user as User;
     } catch (error) {
         console.log("Error", error)
         return null
