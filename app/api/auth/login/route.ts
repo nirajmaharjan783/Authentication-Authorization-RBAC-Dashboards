@@ -5,12 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     try {
+
         const { email, password } = await request.json()
 
         if (!email || !password) {
             return NextResponse.json({
-                error: "Email and Password is required",
-            }, { status: 400 })
+                error: "Email and Password is required"
+            }, { status: 401 })
         }
 
         const userFromDb = await prisma.user.findUnique({
@@ -20,15 +21,15 @@ export async function POST(request: NextRequest) {
 
         if (!userFromDb) {
             return NextResponse.json({
-                error: "invalid credentials",
+                error: "Invalid credentials"
             }, { status: 401 })
         }
 
-        const isValidPassword = await verifyPassword(password, userFromDb.password)
+        const isvalidPassword = await verifyPassword(password, userFromDb.password)
 
-        if (!isValidPassword) {
+        if (!isvalidPassword) {
             return NextResponse.json({
-                error: "Invalid Password",
+                error: "Invalid email or password"
             }, { status: 401 })
         }
 
@@ -37,19 +38,20 @@ export async function POST(request: NextRequest) {
         const response = NextResponse.json({
             user: {
                 id: userFromDb.id,
-                email: userFromDb.email,
                 name: userFromDb.name,
+                email: userFromDb.email,
                 role: userFromDb.role,
-                teamId: userFromDb.teamId,
+                temaId: userFromDb.teamId,
                 team: userFromDb.team,
                 token,
-            },
+            }
         })
+
         response.cookies.set("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 60 * 60 * 24 * 7
+            maxAge: 60 * 60 * 24 * 4
         })
 
         return response

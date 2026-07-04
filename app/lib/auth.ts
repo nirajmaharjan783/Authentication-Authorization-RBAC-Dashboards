@@ -11,8 +11,8 @@ export const hashPassword = async (password: string): Promise<string> => {
 }
 
 
-export const verifyPassword = async (password: string, hashedPassword: string): Promise<boolean> => {
-    return bcrypt.compare(password, hashedPassword)
+export const verifyPassword = async (password: string, hashPassword: string): Promise<boolean> => {
+    return bcrypt.compare(password, hashPassword)
 }
 
 
@@ -21,7 +21,7 @@ export const generateToken = (userId: string): string => {
 }
 
 
-export const verifyToken = (token: string): { userId: string } => {
+export const verifyToken = (token: string) => {
     return jwt.verify(token, JWT_SECRET) as { userId: string }
 }
 
@@ -30,23 +30,28 @@ export const getCurrentUser = async (): Promise<User | null> => {
     try {
         const cookieStore = await cookies()
         const token = cookieStore.get("token")?.value
+
         if (!token) return null
+
         const decode = verifyToken(token)
 
         const userFromDb = await prisma.user.findUnique({
-            where: { id: decode.userId },
+            where: { id: decode.userId }
         })
+
         if (!userFromDb) return null
+
         const { password, ...user } = userFromDb
+
         return user as User
+
     } catch (error) {
-        console.error("Error:", error)
+        console.log("Error", error)
         return null
     }
 }
 
-
-//Check the permission of a user, whether the user has permission or not, whether the user have particular role or not
+//checks what user is allowed to do by comparing role levels using numeric values
 export const checkUserPermission = (
     user: User,
     requiredRole: Role,
@@ -58,4 +63,4 @@ export const checkUserPermission = (
         [Role.ADMIN]: 3,
     }
     return roleHierarchy[user.role] >= roleHierarchy[requiredRole]
-}
+}   

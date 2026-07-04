@@ -8,20 +8,18 @@ datasource db {
 }
 
 model User {
-    id       String  @id @default(cuid())
-    email    String  @unique
-    password String
-    name     String
-    role     Role    @default(USER)
-    teamId   String?
-    team     Team?   @relation(fields: [teamId], references: [id], onDelete: SetNull)
-
-    //Timestamps
+    id        String   @id @default(cuid())
+    email     String   @unique
+    password  String
+    name      String
+    role      Role     @default(USER)
+    teamId    String?
+    team      Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     // Indexes
-    @@index([email])
+    @@index([email]) //index will help searching or filterring faster by going directlly to that page
     @@index([role])
     @@index([teamId])
     //map
@@ -37,7 +35,7 @@ model Team {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
-    @@map("teams")
+    @@map("teams") //table name for database
 }
 
 enum Role {

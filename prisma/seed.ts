@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 
 async function main() {
     console.log("Starting database seed...")
+
     //Create Teams
     const teams = await Promise.all([
         prisma.team.create({
@@ -45,7 +46,7 @@ async function main() {
             role: Role.USER,
         },
         {
-            name: "Bob Markete",
+            name: "Bob Marketer",
             email: "bob@company.com",
             team: teams[1],
             role: Role.MANAGER,

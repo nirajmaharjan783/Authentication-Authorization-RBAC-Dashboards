@@ -59,8 +59,10 @@ export async function GET(request: NextRequest) {
             }
         })
         return NextResponse.json({ users })
+
     } catch (error) {
         console.error("Get users error:", error)
+
         return NextResponse.json({
             error: "Invalid server error, Something went wrong",
         }, { status: 500 })

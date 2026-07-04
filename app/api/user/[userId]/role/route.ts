@@ -8,32 +8,35 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
     try {
         const { userId } = await context.params
         const currentUser = await getCurrentUser()
+        console.log("Current User:", currentUser)
 
         if (!currentUser || !checkUserPermission(currentUser, Role.ADMIN)) {
             return NextResponse.json({
-                error: "You are not authorized to assign a team",
+                error: "You cannot asiign a team only Admin can"
             }, { status: 401 })
         }
 
         if (userId === currentUser.id) {
             return NextResponse.json({
-                error: "You cannot change your own role",
+                error: "you cannot change your own role"
             }, { status: 401 })
         }
 
         const { role } = await request.json()
 
-        const validateRoles = [Role.USER, Role.MANAGER]
-        if (!validateRoles.includes(role)) {
+        const validateRole = [Role.USER, Role.MANAGER]
+        if (!validateRole.includes(role)) {
             return NextResponse.json({
-                error: "Invalid role or you cannot have more than one ADMIN role user",
+                error: "Invalid role selection and you cannot have more than one Admin role user"
             }, { status: 404 })
         }
 
         const updatedUser = await prisma.user.update({
-            where: { id: userId },
+            where: {
+                id: userId
+            },
             data: {
-                role,
+                role
             },
             include: {
                 team: true
@@ -44,6 +47,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
             user: updatedUser,
             message: `User role updated to ${role} successfully`
         })
+
     } catch (error) {
         console.error("Role assignment error:", error)
         if (error instanceof Error && error.message.includes("Record to update not found")) {

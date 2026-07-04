@@ -26,21 +26,17 @@ export async function POST(request: NextRequest) {
             )
         }
 
-
         let teamId: string | undefined
         if (teamCode) {
             const team = await prisma.team.findUnique({
                 where: { code: teamCode }
             })
-
             if (!team) {
                 return NextResponse.json({
-                    error: "Please add valid team code",
+                    message: "Team not found"
                 },
-                    { status: 400 }
-                )
+                    { status: 400 })
             }
-
             teamId = team.id
         }
 
@@ -56,7 +52,7 @@ export async function POST(request: NextRequest) {
                 email,
                 password: hashedPassword,
                 role,
-                teamId,
+                teamId
             },
             include: {
                 team: true
@@ -78,6 +74,7 @@ export async function POST(request: NextRequest) {
                 token,
             },
         })
+
         //Set cookie
         response.cookies.set("token", token, {
             httpOnly: true,
@@ -85,6 +82,7 @@ export async function POST(request: NextRequest) {
             sameSite: "lax",
             maxAge: 60 * 60 * 24 * 7
         })
+
         return response
     } catch (error) {
         return NextResponse.json({
